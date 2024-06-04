@@ -52,11 +52,18 @@ namespace LogDashboard
         /// file log field Delimiter
         /// </summary>
         public string FileFieldDelimiter { get; set; }
-
+        
         /// <summary>
         /// file log end Delimiter
         /// </summary>
         public string FileEndDelimiter { get; set; }
+
+        /// <summary>
+        /// 使用正则表达式作为分隔符，默认false。如果设置为true，则FileFieldDelimiter将被视为正则表达式。
+        /// 支持格式（顺序和文本要一致，Logger是可选的，其他是必须的）：记录时间：(.*?)\n线程ID:(.*?)\n日志级别：(.*?)\n(?:Logger:(.*?)\n)?跟踪描述：(.*?)\n堆栈信息：(.*)
+        /// </summary>
+        public bool FileFieldDelimiterWithRegex { get; set; }
+
 
         public void AddAuthorizeAttribute(params IAuthorizeData[] authorizeAttributes)
         {
@@ -94,6 +101,7 @@ namespace LogDashboard
             FileSource = true;
             FileFieldDelimiter = "||";
             FileEndDelimiter = "||end";
+            FileFieldDelimiterWithRegex = false;
             PathMatch = "/LogDashboard";
             LogModelType = typeof(LogModel);
             AuthorizationFiles = new List<ILogDashboardAuthorizationFilter>();

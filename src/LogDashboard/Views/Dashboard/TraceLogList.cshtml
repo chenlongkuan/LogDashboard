@@ -11,7 +11,8 @@
         <thead class="w-100">
             <tr class="row mx-0">
                 <th class="col-1">Id</th>
-                <th class="col-3">Logger</th>
+                <th class="col-1">ThreadId</th>
+                <th class="col-2">Logger</th>
                 <th class="col-1">级别</th>
                 <th class="col-5">消息</th>
                 <th class="col-2">时间</th>
@@ -22,7 +23,8 @@
             {
             <tr class="row mx-0">
                 <td class="col-1"><a href="javascript:void(0);" onclick="logInfo('@item.Id.ToString()')">@item.Id.ToString()</a></td>
-                <td class="col-3"><span>@item.Logger</span></td>
+                <td class="col-1"><span>@item.ThreadId</span></td>
+                <td class="col-2"><span>@item.Logger</span></td>
                 @{
                         // if (item.Level== LogLevelConst.Error)
                         // {
@@ -52,20 +54,24 @@
                     }
                     @message
                 </td>
-                <td class="col-2">@item.LongDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                <td class="col-2">@item.LongDate.ToString("yyyy-MM-dd HH:mm:ss.fff")</td>
             </tr>
             <tr class="row mx-0">
                 <td colspan="10" style="width: 100%">
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tbody>
-                                <tr>
-                                    <td>Id</td>
-                                    <td class="text-nowrap">@item.Id.ToString()</td>
-                                </tr>
+                            <tr>
+                                <td>Id</td>
+                                <td class="text-nowrap">@item.Id.ToString()</td>
+                            </tr>
+                            <tr>
+                                <td>ThreadId</td>
+                                <td class="text-nowrap">@item.ThreadId</td>
+                            </tr>
                                 <tr>
                                     <td>时间</td>
-                                    <td class="text-nowrap">@item.LongDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                    <td class="text-nowrap">@item.LongDate.ToString("yyyy-MM-dd HH:mm:ss.fff")</td>
                                 </tr>
                                 <tr>
                                     <td>级别</td>

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using LogDashboard.Cache;
 using LogDashboard.Extensions;
@@ -101,10 +103,11 @@ namespace LogDashboard.Repository.File
             }
         }
 
+
         private async Task ReadLogs(int id = 1)
         {
 
-            foreach (var logFile in LogFiles.Where(x=>x.ShouldRead))
+            foreach (var logFile in LogFiles.Where(x => x.ShouldRead))
             {
                 var stringBuilder = new StringBuilder();
 
@@ -124,47 +127,93 @@ namespace LogDashboard.Repository.File
                     }
                 }
 
-                var text = stringBuilder.ToString();
-                var logLines = text.Trim().Replace("|| end", _options.FileEndDelimiter)
-                    .Split(new[] {_options.FileEndDelimiter}, StringSplitOptions.None)
-                    .Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-                foreach (var logLine in logLines)
+                var text = stringBuilder.ToString().Trim();
+                if (_options.FileFieldDelimiterWithRegex)
                 {
-                    var line = logLine.Split(new[] {_options.FileFieldDelimiter}, StringSplitOptions.None);
-                    if (line.Length > 1)
+                    // 正则表达式匹配模式，匹配从"记录时间："开始到文件末尾的所有内容
+                    var pattern = @"记录时间：(.*?)(?=(记录时间：|$))";
+
+                    // 使用RegexOptions.Singleline使得.匹配包括换行符在内的任意字符
+                    var matches = Regex.Matches(text, pattern, RegexOptions.Singleline);
+
+
+                    foreach (Match match in matches)
                     {
+
+                        // 提取每个日志条目的信息
+                        string logEntry = match.Value.Trim();
+                        // 正则表达式匹配单个日志条目的各个部分
+                        string entryPattern = @"记录时间：(.*?)\n线程ID:(.*?)\n日志级别：(.*?)\n(?:Logger:(.*?)\n)?跟踪描述：(.*?)\n堆栈信息：(.*)";
+                        Match entryMatch = Regex.Match(logEntry, entryPattern, RegexOptions.Singleline);
+                        if (!entryMatch.Success) continue;
+                        string recordTime = entryMatch.Groups[1].Value.Trim();
+                        string threadId = entryMatch.Groups[2].Value.Trim();
+                        string logLevel = entryMatch.Groups[3].Value.Trim();
+                        string logger = entryMatch.Groups[4].Value.Trim();
+                        string traceDescription = entryMatch.Groups[5].Value.Trim();
+                        string stackTrace = entryMatch.Groups[6].Value.Trim();
+
                         var item = new T
                         {
                             Id = id,
-                            LongDate = DateTime.Parse(line.TryGetValue(0)),
-                            Level = line.TryGetValue(1),
-                            Logger = line.TryGetValue(2),
-                            Message = line.TryGetValue(3),
-                            Exception = line.TryGetValue(4)
+                            LongDate = DateTime.ParseExact(recordTime, "yyyy-MM-dd HH:mm:ss fff", CultureInfo.InvariantCulture),
+                            Level = logLevel,
+                            Logger = logger,
+                            Message = traceDescription,
+                            ThreadId = threadId,
+                            Exception = stackTrace
                         };
-
-                        var lineEnd = Math.Min(_options.CustomPropertyInfos.Count, line.Length - 5);
-                        if (line.Length - 5 != _options.CustomPropertyInfos.Count && logLine == logLines.Last())
-                        {
-                            _logs.Add(CreateWarnItem(id, $"Warn: {Path.GetFileName(logFile.Path)} 文件内容与自定义日志模型不完全匹配,请检查代码!"));
-                        }
-
-                        for (var i = 0; i < lineEnd; i++)
-                        {
-                            _options.CustomPropertyInfos[i].SetValue(item, line.TryGetValue(i + 5));
-                        }
-
                         _logs.Add(item);
                         id++;
+
                     }
                 }
+                else
+                {
+                    var logLines = text.Replace("|| end", _options.FileEndDelimiter)
+                                       .Split(new[] { _options.FileEndDelimiter }, StringSplitOptions.None)
+                                       .Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                    foreach (var logLine in logLines)
+                    {
+                        var line = logLine.Split(new[] { _options.FileFieldDelimiter }, StringSplitOptions.None);
+                        if (line.Length > 1)
+                        {
+                            var item = new T
+                            {
+                                Id = id,
+                                LongDate = DateTime.Parse(line.TryGetValue(0)),
+                                Level = line.TryGetValue(1),
+                                Logger = line.TryGetValue(2),
+                                Message = line.TryGetValue(3),
+                                Exception = line.TryGetValue(4)
+                            };
+
+                            var lineEnd = Math.Min(_options.CustomPropertyInfos.Count, line.Length - 5);
+                            if (line.Length - 5 != _options.CustomPropertyInfos.Count && logLine == logLines.Last())
+                            {
+                                _logs.Add(CreateWarnItem(id, $"Warn: {Path.GetFileName(logFile.Path)} 文件内容与自定义日志模型不完全匹配,请检查代码!"));
+                            }
+
+                            for (var i = 0; i < lineEnd; i++)
+                            {
+                                _options.CustomPropertyInfos[i].SetValue(item, line.TryGetValue(i + 5));
+                            }
+
+                            _logs.Add(item);
+                            id++;
+                        }
+                    }
+                }
+
+
 
                 logFile.ShouldRead = false;
             }
 
             await _cacheManager.SetCache(LogDashboardConsts.LogDashboardLogsCache, _logs);
         }
+
 
         private async Task ReadAllLogs()
         {

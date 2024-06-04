@@ -19,6 +19,7 @@ namespace LogDashboard.Models
         public string Logger { get; set; }
 
         public string Exception { get; set; }
+        public string ThreadId { get; set; }
     }
 
 }

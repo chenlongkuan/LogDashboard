@@ -15,5 +15,7 @@ namespace LogDashboard.Models
         string Message { get; set; }
 
         string Exception { get; set; }
+
+        string ThreadId { get; set; }
     }
 }

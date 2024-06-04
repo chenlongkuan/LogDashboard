@@ -33,13 +33,17 @@
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <tbody>
-                            <tr>
-                                <td>Id</td>
-                                <td class="text-nowrap">@log.Id.ToString()</td>
-                            </tr>
+                        <tr>
+                            <td>Id</td>
+                            <td class="text-nowrap">@log.Id.ToString()</td>
+                        </tr>
+                        <tr>
+                                <td>ThreadId</td>
+                            <td class="text-nowrap">@log.ThreadId</td>
+                        </tr>
                             <tr>
                                 <td>时间</td>
-                                <td class="text-nowrap">@log.LongDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td class="text-nowrap">@log.LongDate.ToString("yyyy-MM-dd HH:mm:ss.fff")</td>
                             </tr>
                             <tr>
                                 <td>级别</td>

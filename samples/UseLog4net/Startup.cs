@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using LogDashboard;
+using LogDashboard.Authorization.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +19,11 @@ namespace UseLog4net
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddLogDashboard();
+            services.AddLogDashboard(opt =>
+            {
+                opt.AddAuthorizationFilter(new LogDashboardBasicAuthFilter("admin", "admin"));
+                opt.FileFieldDelimiterWithRegex = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +47,14 @@ namespace UseLog4net
                 //ThreadContext.Properties["identity"] = context.TraceIdentifier;
                 var logger = app.ApplicationServices.GetService<ILogger<Startup>>();
                 logger.LogInformation("来点日志");
+                try
+                {
+                    throw new InvalidCastException("错误日志示例");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex,ex.Message);
+                }
                 await context.Response.WriteAsync("Hello World!");
             });
         }
