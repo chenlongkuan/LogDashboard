@@ -21,7 +21,7 @@ namespace UseLog4net
 
             services.AddLogDashboard(opt =>
             {
-                opt.AddAuthorizationFilter(new LogDashboardBasicAuthFilter("admin", "admin"));
+                //opt.AddAuthorizationFilter(new LogDashboardBasicAuthFilter("admin", "admin"));
                 opt.FileFieldDelimiterWithRegex = true;
             });
         }
@@ -33,12 +33,18 @@ namespace UseLog4net
             {
                 app.UseDeveloperExceptionPage();
             }
+
             loggerFactory.AddLog4Net(new Log4NetProviderOptions
             {
                 PropertyOverrides =
                     new List<NodeInfo>
                     {
-                        new NodeInfo { XPath = "/log4net/appender/file[last()]", Attributes = new Dictionary<string, string> { { "value", $"{AppContext.BaseDirectory}LogFiles/" } } }
+                        new NodeInfo
+                        {
+                            XPath = "/log4net/appender/file[last()]",
+                            Attributes = new Dictionary<string, string>
+                                { { "value", $"{AppContext.BaseDirectory}logs/" } }
+                        }
                     }
             });
             app.UseLogDashboard();

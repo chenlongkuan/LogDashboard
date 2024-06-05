@@ -182,7 +182,7 @@ WriteLiteral("</td>\r\n                    <td class=\"col-2\">");
 
             
             #line 45 "..\..\Views\Dashboard\LogList.cshtml"
-                                 Write(item.LongDate.ToString("yyyy-MM-dd HH:mm:ss"));
+                                 Write(item.LongDate.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 
             
             #line default

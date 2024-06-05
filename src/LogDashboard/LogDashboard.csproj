@@ -5,16 +5,18 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>liangshiwei</Authors>
     <Description>日志面板、LogDashboard、AspNetCore</Description>
-    <PackageProjectUrl>https://github.com/liangshiw/LogDashboard</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/chenlongkuan/LogDashboard</PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/liangshiw/LogDashboard/develop/logo.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/liangshiw/LogDashboard</RepositoryUrl>
+    <RepositoryUrl>https://github.com/chenlongkuan/LogDashboard.git</RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
-    <Version>1.4.6</Version>
+    <Version>1.0.0</Version>
     <Company>liangshiwei</Company>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>8.0</LangVersion>
     <PackageVersion>1.4.8</PackageVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Product>$(AssemblyName)</Product>
   </PropertyGroup>
 
   <ItemGroup>

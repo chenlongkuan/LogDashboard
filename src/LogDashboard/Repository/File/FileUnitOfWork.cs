@@ -131,7 +131,7 @@ namespace LogDashboard.Repository.File
                 if (_options.FileFieldDelimiterWithRegex)
                 {
                     // 正则表达式匹配模式，匹配从"记录时间："开始到文件末尾的所有内容
-                    var pattern = @"记录时间：(.*?)(?=(记录时间：|$))";
+                    var pattern = @"记录时间：[\s\S]*?(?=(记录时间：|$))";
 
                     // 使用RegexOptions.Singleline使得.匹配包括换行符在内的任意字符
                     var matches = Regex.Matches(text, pattern, RegexOptions.Singleline);
@@ -143,7 +143,7 @@ namespace LogDashboard.Repository.File
                         // 提取每个日志条目的信息
                         string logEntry = match.Value.Trim();
                         // 正则表达式匹配单个日志条目的各个部分
-                        string entryPattern = @"记录时间：(.*?)\n线程ID:(.*?)\n日志级别：(.*?)\n(?:Logger:(.*?)\n)?跟踪描述：(.*?)\n堆栈信息：(.*)";
+                        string entryPattern = @"记录时间：(.*?)\n线程ID:(.*?)\n日志级别：(.*?)\n(?:Logger:(.*?)\n)?跟踪描述：(.*?)(?:\s*堆栈信息：(.*))?$";
                         Match entryMatch = Regex.Match(logEntry, entryPattern, RegexOptions.Singleline);
                         if (!entryMatch.Success) continue;
                         string recordTime = entryMatch.Groups[1].Value.Trim();
