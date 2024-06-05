@@ -3,20 +3,20 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;netstandard2.0</TargetFrameworks>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>liangshiwei</Authors>
+    <Authors>信息咨询部</Authors>
     <Description>日志面板、LogDashboard、AspNetCore</Description>
-    <PackageProjectUrl>https://github.com/chenlongkuan/LogDashboard</PackageProjectUrl>
+    <PackageProjectUrl></PackageProjectUrl>
     <PackageIconUrl>https://raw.githubusercontent.com/liangshiw/LogDashboard/develop/logo.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/chenlongkuan/LogDashboard.git</RepositoryUrl>
+    <RepositoryUrl></RepositoryUrl>
     <RepositoryType>GitHub</RepositoryType>
     <Version>1.0.0</Version>
-    <Company>liangshiwei</Company>
+    <Company>STGD</Company>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <LangVersion>8.0</LangVersion>
-    <PackageVersion>1.4.8</PackageVersion>
+    <PackageVersion>1.0.0</PackageVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>$(AssemblyName)</PackageId>
-    <Product>$(AssemblyName)</Product>
+    <PackageId>$(AssemblyName)-STGD</PackageId>
+    <Product>$(AssemblyName)-STGD</Product>
   </PropertyGroup>
 
   <ItemGroup>
