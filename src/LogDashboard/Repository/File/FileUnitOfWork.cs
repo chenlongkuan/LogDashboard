@@ -141,18 +141,30 @@ namespace LogDashboard.Repository.File
                     {
 
                         // 提取每个日志条目的信息
-                        string logEntry = match.Value.Trim();
+                        var logEntry = match.Value.Trim();
                         // 正则表达式匹配单个日志条目的各个部分
-                        string entryPattern = @"记录时间：(.*?)\n线程ID:(.*?)\n日志级别：(.*?)\n(?:Logger:(.*?)\n)?跟踪描述：(.*?)(?:\s*堆栈信息：(.*))?$";
-                        Match entryMatch = Regex.Match(logEntry, entryPattern, RegexOptions.Singleline);
+                        var entryPattern = @"记录时间：(.*?)\n线程ID:(.*?)\n日志级别：(.*?)\n(?:Logger:(.*?)\n)?跟踪描述：(.*?)(?:\s*堆栈信息：(.*))?$";
+                        var entryMatch = Regex.Match(logEntry, entryPattern, RegexOptions.Singleline);
                         if (!entryMatch.Success) continue;
-                        string recordTime = entryMatch.Groups[1].Value.Trim();
-                        string threadId = entryMatch.Groups[2].Value.Trim();
-                        string logLevel = entryMatch.Groups[3].Value.Trim();
-                        string logger = entryMatch.Groups[4].Value.Trim();
-                        string traceDescription = entryMatch.Groups[5].Value.Trim();
-                        string stackTrace = entryMatch.Groups[6].Value.Trim();
-
+                        var recordTime = entryMatch.Groups[1].Value.Trim();
+                        var threadId = entryMatch.Groups[2].Value.Trim();
+                        var logLevel = entryMatch.Groups[3].Value.Trim();
+                        var logger = entryMatch.Groups[4].Value.Trim();
+                        var traceDescription = entryMatch.Groups[5].Value.Trim();
+                        var stackTrace = entryMatch.Groups[6].Value.Trim();
+                        // 如果没找到堆栈信息，则尝试从跟踪描述中提取
+                        if (string.IsNullOrWhiteSpace(stackTrace))
+                        {
+                            // 查找第一个换行符
+                            int firstNewLineIndex = traceDescription.IndexOf(Environment.NewLine);
+                            if (firstNewLineIndex != -1)
+                            {
+                                // 提取 Message 和 StackTrace
+                                stackTrace = traceDescription.Substring(firstNewLineIndex + Environment.NewLine.Length).Trim();
+                                traceDescription = traceDescription.Substring(0, firstNewLineIndex).Trim();
+                              
+                            }
+                        }
                         var item = new T
                         {
                             Id = id,
